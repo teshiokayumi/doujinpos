@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>同人POSレジ＆おつり計算</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="calculator">
+            <div class="mode-selector">
+                <button id="purchase-mode" class="mode-btn active">購入モード</button>
+                <button id="change-mode" class="mode-btn">おつりモード</button>
+            </div>
+            <div class="display">
+                <input type="text" id="calc-display" readonly placeholder="購入モードでは商品を選択">
+            </div>
+            <div id="purchase-panel" class="panel">
+                <div id="purchase-buttons" class="purchase-buttons"></div>
+                <button id="reset" class="btn action">リセット</button>
+            </div>
+            <div id="change-panel" class="buttons hidden">
+                <button class="btn number" data-value="7">7</button>
+                <button class="btn number" data-value="8">8</button>
+                <button class="btn number" data-value="9">9</button>
+                <button class="btn operator" data-value="-">-</button>
+                <button class="btn number" data-value="4">4</button>
+                <button class="btn number" data-value="5">5</button>
+                <button class="btn number" data-value="6">6</button>
+                <button class="btn clear">C</button>
+                <button class="btn number" data-value="1">1</button>
+                <button class="btn number" data-value="2">2</button>
+                <button class="btn number" data-value="3">3</button>
+                <button class="btn equals">=</button>
+                <button class="btn number" data-value="0">0</button>
+                <button class="btn operator" data-value=".">.</button>
+                <button class="btn action" id="backspace">←</button>
+                <button class="btn action" id="clear-entry">CE</button>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div class="mirror-panel">
+                <div class="pos-summary">
+                    <h2>商品リスト</h2>
+                    <ul id="item-list"></ul>
+                </div>
+                <div class="message">
+                    <p id="mode-info">購入モード：商品をタップしてください</p>
+                    <p id="total-message">合計 <span id="total-amount">0</span> 円</p>
+                    <p id="change-message" class="hidden">おつりは <span id="change-amount">0</span> 円です</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
