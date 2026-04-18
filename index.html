@@ -18,7 +18,10 @@
             </div>
             <div id="purchase-panel" class="panel">
                 <div id="purchase-buttons" class="purchase-buttons"></div>
-                <button id="reset" class="btn action">リセット</button>
+                <div class="action-buttons">
+                    <button id="total-btn" class="btn action">合計</button>
+                    <button id="reset" class="btn action">リセット</button>
+                </div>
             </div>
             <div id="change-panel" class="buttons hidden">
                 <button class="btn number" data-value="7">7</button>
@@ -49,6 +52,7 @@
                     <p id="mode-info">購入モード：商品をタップしてください</p>
                     <p id="total-message">合計 <span id="total-amount">0</span> 円</p>
                     <p id="change-message" class="hidden">おつりは <span id="change-amount">0</span> 円です</p>
+                    <button id="download-csv" class="btn action hidden">CSVダウンロード</button>
                 </div>
             </div>
         </div>

@@ -14,6 +14,8 @@ let previousInput = '';
 let operation = null;
 let total = 0;
 let mode = 'purchase';
+let sales = [];
+let savedTotal = 0;
 
 const display = document.getElementById('calc-display');
 const totalAmount = document.getElementById('total-amount');
@@ -30,6 +32,8 @@ const itemList = document.getElementById('item-list');
 const resetBtn = document.getElementById('reset');
 const backspaceBtn = document.getElementById('backspace');
 const clearEntryBtn = document.getElementById('clear-entry');
+const totalBtn = document.getElementById('total-btn');
+const downloadCsvBtn = document.getElementById('download-csv');
 
 function updateDisplay() {
     display.value = currentInput;
@@ -37,6 +41,7 @@ function updateDisplay() {
 
 function resetPurchase() {
     total = 0;
+    sales = [];
     itemList.innerHTML = '';
     updateTotalDisplay();
 }
@@ -52,8 +57,11 @@ function clearCalculator() {
         modeInfo.textContent = '購入モード：商品をタップしてください';
         changeMessage.classList.add('hidden');
         totalMessage.classList.remove('hidden');
+        downloadCsvBtn.classList.add('hidden');
     } else {
-        modeInfo.textContent = 'おつりモード：支払金額 → － → 商品代金 → =';
+        previousInput = savedTotal.toString();
+        operation = '-';
+        modeInfo.textContent = '支払金額を入力してください';
         changeAmount.textContent = '0';
         changeMessage.classList.add('hidden');
         totalMessage.classList.add('hidden');
@@ -74,9 +82,9 @@ function setOperation(op) {
     if (op === '-') {
         previousInput = currentInput;
         operation = op;
-        currentInput = '';
+        currentInput = savedTotal.toString();
         updateDisplay();
-        modeInfo.textContent = '商品代金を入力してください';
+        modeInfo.textContent = '商品代金は自動入力されました。= を押してください';
     }
 }
 
@@ -99,8 +107,31 @@ function updateTotalDisplay() {
     totalAmount.textContent = total.toFixed(0);
 }
 
+function generateCSV() {
+    const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    let csv = '日付,商品名,価格,数量,合計\n';
+    sales.forEach(item => {
+        csv += `${date},${item.name},${item.price},${item.quantity},${item.price * item.quantity}\n`;
+    });
+    return csv;
+}
+
+function downloadCSV() {
+    const csv = generateCSV();
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `sales_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 function appendItem(item) {
     total += item.price;
+    sales.push({ name: item.name, price: item.price, quantity: 1 });
     const li = document.createElement('li');
     li.textContent = `${item.name} - ${item.price.toLocaleString()}円`;
     itemList.appendChild(li);
@@ -125,17 +156,25 @@ function initPurchaseButtons() {
 }
 
 function switchMode(newMode) {
+    if (newMode === 'change') {
+        savedTotal = total;
+    }
     mode = newMode;
     purchasePanel.classList.toggle('hidden', mode === 'change');
     changePanel.classList.toggle('hidden', mode === 'purchase');
     purchaseModeBtn.classList.toggle('active', mode === 'purchase');
     changeModeBtn.classList.toggle('active', mode === 'change');
     clearCalculator();
+    downloadCsvBtn.classList.add('hidden');
 }
 
 purchaseModeBtn.addEventListener('click', () => switchMode('purchase'));
 changeModeBtn.addEventListener('click', () => switchMode('change'));
 resetBtn.addEventListener('click', clearCalculator);
+totalBtn.addEventListener('click', () => {
+    downloadCsvBtn.classList.remove('hidden');
+});
+downloadCsvBtn.addEventListener('click', downloadCSV);
 backspaceBtn.addEventListener('click', () => {
     if (mode !== 'change') return;
     currentInput = currentInput.slice(0, -1);
